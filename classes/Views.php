@@ -42,12 +42,29 @@ class Views
         $this->db->insert($statement);
     }
 
+    public function set($id, $amount = 0)
+    {
+        $statement = "INSERT INTO {$this->table_total_views} (id, count) VALUES ('$id', $amount) ON CONFLICT(id) DO UPDATE SET count = $amount";
+        $this->db->insert($statement);
+    }
+
     public function get($id)
     {
         $statement = "SELECT count FROM {$this->table_total_views} WHERE id = '$id'";
         $results = $this->db->select($statement);
 
         return $results['count'] ?? 0;
+    }
+
+    public function getAll($limit = 0, $order = 'ASC')
+    {
+        $limit = $limit ? ' LIMIT ' . $limit : '';
+        $order = $order ? ' ORDER BY count ' . strtoupper($order) : '';
+        $statement = "SELECT id, count FROM {$this->table_total_views}" . $order . $limit;
+
+        $results = $this->db->selectall($statement);
+
+        return $results;
     }
 
     public function createTables()
