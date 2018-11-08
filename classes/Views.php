@@ -97,6 +97,8 @@ class Views
 
         $statement = $this->db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_STR);
+        $statement->execute();
+
         $results = $statement->fetch();
 
         return $results['count'] ?? 0;
@@ -112,6 +114,7 @@ class Views
         $statement = $this->db->prepare($query);
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
         $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
 
         return $statement->fetchAll();
     }
