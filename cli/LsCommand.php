@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @package Grav\Console\Cli
  */
-class ListCommand extends ConsoleCommand
+class LsCommand extends ConsoleCommand
 {
     /** @var array */
     protected $options = [];
@@ -35,7 +35,7 @@ class ListCommand extends ConsoleCommand
     protected function configure()
     {
         $this
-            ->setName('list')
+            ->setName('ls')
             ->addArgument(
                 'slug',
                 InputArgument::OPTIONAL,
