@@ -38,14 +38,28 @@ class Views
 
     public function track($id, $amount = 1)
     {
-        $statement = "INSERT INTO {$this->table_total_views} (id, count) VALUES ('$id', $amount) ON CONFLICT(id) DO UPDATE SET count = count + $amount";
+        if (!$id) { return false; }
+
+        // $statement = "INSERT INTO {$this->table_total_views} (id, count) VALUES ('$id', $amount) ON CONFLICT(id) DO UPDATE SET count = count + $amount";
+        // $this->db->insert($statement);
+        $statement = "INSERT OR IGNORE INTO {$this->table_total_views} (id, count) VALUES ('$id', 0)";
         $this->db->insert($statement);
+
+        $statement = "UPDATE {$this->table_total_views} SET count = count + $amount WHERE id='$id'";
+        $this->db->update($statement);
     }
 
     public function set($id, $amount = 0)
     {
-        $statement = "INSERT INTO {$this->table_total_views} (id, count) VALUES ('$id', $amount) ON CONFLICT(id) DO UPDATE SET count = $amount";
+        if (!$id) { return false; }
+
+        // $statement = "INSERT INTO {$this->table_total_views} (id, count) VALUES ('$id', $amount) ON CONFLICT(id) DO UPDATE SET count = $amount";
+        // $this->db->insert($statement);
+        $statement = "INSERT OR IGNORE INTO {$this->table_total_views} (id, count) VALUES ('$id', 0)";
         $this->db->insert($statement);
+
+        $statement = "UPDATE {$this->table_total_views} SET count = $amount WHERE id='$id'";
+        $this->db->update($statement);
     }
 
     public function get($id)
