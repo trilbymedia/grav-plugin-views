@@ -67,8 +67,8 @@ class LsCommand extends ConsoleCommand
     protected function serve()
     {
         include __DIR__ . '/../vendor/autoload.php';
+
         $grav = Grav::instance();
-        /** @var use new SymfonyStyle helper $io */
         $io = new SymfonyStyle($this->input, $this->output);
 
         // Initialize Plugins
