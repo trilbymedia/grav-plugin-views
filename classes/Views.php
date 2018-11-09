@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Plugin\Views;
 
+use Grav\Common\Filesystem\Folder;
 use Grav\Common\Grav;
 use Grav\Common\Config\Config;
 use Grav\Plugin\Database\PDO;
@@ -11,21 +12,21 @@ class Views
     protected $db;
 
     protected $config;
-    protected $path = '/views';
-    protected $db_name = '/views.db';
+    protected $path = 'user://data/views';
+    protected $db_name = 'views.db';
     protected $table_total_views = 'total_views';
 
     public function __construct($config)
     {
         $this->config = new Config($config);
-        $db_path = Grav::instance()['locator']->findResource('user://data', true) . $this->path;
+        $db_path = Grav::instance()['locator']->findResource($this->path, true, true);
 
         // Create dir if it doesn't exist
         if (!file_exists($db_path)) {
-            mkdir($db_path);
+            Folder::create($db_path);
         }
 
-        $connect_string = 'sqlite:' . $db_path . $this->db_name;
+        $connect_string = 'sqlite:' . $db_path . '/' . $this->db_name;
 
         $this->db = Grav::instance()['database']->connect($connect_string);
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -37,6 +38,7 @@ class Views
 
     public function track($id, $amount = 1)
     {
+        // Support SQLite < 3.24
         if (!$this->supportOnConflict()) {
             $query = "UPDATE {$this->table_total_views} SET count = count + :amount WHERE id = :id";
 
@@ -45,12 +47,14 @@ class Views
             $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
             $statement->execute();
 
-            $query = "INSERT OR IGNORE INTO {$this->table_total_views} (id, count) VALUES (:id, :amount)";
+            if ($statement->rowCount() === 0) {
+                $query = "INSERT INTO {$this->table_total_views} (id, count) VALUES (:id, :amount)";
 
-            $statement = $this->db->prepare($query);
-            $statement->bindValue(':id', $id, PDO::PARAM_STR);
-            $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
-            $statement->execute();
+                $statement = $this->db->prepare($query);
+                $statement->bindValue(':id', $id, PDO::PARAM_STR);
+                $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
+                $statement->execute();
+            }
 
             return;
         }
@@ -65,6 +69,7 @@ class Views
 
     public function set($id, $amount = 0)
     {
+        // Support SQLite < 3.24
         if (!$this->supportOnConflict()) {
             $query = "UPDATE {$this->table_total_views} SET count = :amount WHERE id = :id";
 
@@ -73,12 +78,14 @@ class Views
             $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
             $statement->execute();
 
-            $query = "INSERT OR IGNORE INTO {$this->table_total_views} (id, count) VALUES (:id, :amount)";
+            if ($statement->rowCount() === 0) {
+                $query = "INSERT INTO {$this->table_total_views} (id, count) VALUES (:id, :amount)";
 
-            $statement = $this->db->prepare($query);
-            $statement->bindValue(':id', $id, PDO::PARAM_STR);
-            $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
-            $statement->execute();
+                $statement = $this->db->prepare($query);
+                $statement->bindValue(':id', $id, PDO::PARAM_STR);
+                $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
+                $statement->execute();
+            }
 
             return;
         }
@@ -136,10 +143,9 @@ class Views
         static $bool;
 
         if ($bool === null) {
-            $bool = version_compare($this->db->query('SELECT sqlite_version()')->fetch()[0], '3.24.0' , '>=');
+            $bool = version_compare($this->db->query('SELECT sqlite_version()')->fetch()[0], '3.24', '>=');
         }
 
         return $bool;
     }
-
 }
