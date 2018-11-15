@@ -24,8 +24,13 @@ class ViewsPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
+            'onCliInitialize' => [
+                ['autoload', 100000],
+                ['register', 1000]
+            ],
             'onPluginsInitialized' => [
                 ['autoload', 100000],
+                ['register', 1000],
                 ['onPluginsInitialized', 1000]
             ]
         ];
@@ -42,21 +47,29 @@ class ViewsPlugin extends Plugin
     }
 
     /**
+     * Register the service
+     */
+    public function register()
+    {
+        $this->grav['likes'] = function () {
+            return new Views($this->config->get('plugins.views'));
+        };
+    }
+
+    /**
      * Initialize the plugin
      */
     public function onPluginsInitialized()
     {
-        $views = new Views($this->config->get('plugins.views'));
-        $this->grav['views'] = $views;
-
         if ($this->isAdmin()) {
             return;
         }
 
         $this->enable([
-            'onTwigInitialized'     => ['onTwigInitialized', 0],
+            'onTwigInitialized' => [
+                ['onTwigInitialized', 0]
+            ],
         ]);
-
     }
 
 
