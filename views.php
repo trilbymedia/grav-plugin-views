@@ -51,7 +51,7 @@ class ViewsPlugin extends Plugin
      */
     public function register()
     {
-        $this->grav['likes'] = function () {
+        $this->grav['views'] = function () {
             return new Views($this->config->get('plugins.views'));
         };
     }
