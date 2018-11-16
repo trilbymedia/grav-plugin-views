@@ -80,8 +80,18 @@ class ViewsPlugin extends Plugin
         );
     }
 
-    public function trackViewsFunc($id)
+    /**
+     * @param mixed|null $id
+     */
+    public function trackViewsFunc($id = null)
     {
+        if (null === $id) {
+            return;
+        }
+
+        // Convert objects to string
+        $id = (string)$id;
+
         $this->grav['views']->track($id);
     }
 }
