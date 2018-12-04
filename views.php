@@ -76,7 +76,7 @@ class ViewsPlugin extends Plugin
     public function onTwigInitialized()
     {
         $this->grav['twig']->twig()->addFunction(
-            new \Twig_SimpleFunction('track_views', [$this, 'trackViewsFunc'])
+            new \Twig_SimpleFunction('track_views', [$this, 'trackViewsFunc'], ['is_safe' => ['html']])
         );
     }
 

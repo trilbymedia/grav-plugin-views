@@ -4,6 +4,7 @@
 1. [](#new)
     * Added support for CLI
     * Allow `{{ track_views(object) }}` format if object can be casted to string containing a key
+    * Make `{{ track_views(object) }}` HTML safe, allowing it to be used without `|raw` filter
 
 # v0.1.0
 ##  11/01/2018
