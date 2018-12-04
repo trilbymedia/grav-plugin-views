@@ -12,7 +12,7 @@ class Views
     protected $db;
 
     protected $config;
-    protected $path = 'user://data/views';
+    protected $path = 'user-data://views';
     protected $db_name = 'views.db';
     protected $table_total_views = 'total_views';
 
