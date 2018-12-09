@@ -116,7 +116,7 @@ class Views
         $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
         $offset = 0;
 
-        $query = "SELECT count FROM {$this->table_total_views} ORDER BY count {$order} LIMIT :limit OFFSET :offset";
+        $query = "SELECT id, count FROM {$this->table_total_views} ORDER BY count {$order} LIMIT :limit OFFSET :offset";
 
         $statement = $this->db->prepare($query);
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);

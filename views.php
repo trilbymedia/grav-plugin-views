@@ -4,6 +4,7 @@ namespace Grav\Plugin;
 use Composer\Autoload\ClassLoader;
 use Grav\Common\Plugin;
 use Grav\Plugin\Views\Views;
+use RocketTheme\Toolbox\Event\Event;
 
 /**
  * Class ViewsPlugin
@@ -62,6 +63,14 @@ class ViewsPlugin extends Plugin
     public function onPluginsInitialized()
     {
         if ($this->isAdmin()) {
+            $this->enable([
+                'onAdminGenerateReports' => [
+                    ['onAdminGenerateReports', 10]
+                ],
+                'onTwigTemplatePaths' => [
+                    ['onTwigTemplatePaths', 0]
+                ],
+            ]);
             return;
         }
 
@@ -70,6 +79,39 @@ class ViewsPlugin extends Plugin
                 ['onTwigInitialized', 0]
             ],
         ]);
+
+        if ($this->grav['config']->get('plugins.views.autotrack')) {
+            $this->enable([
+                'onPageInitialized' => [
+                    ['onPageInitialized', 0]
+                ],
+            ]);
+        }
+    }
+
+    public function onAdminGenerateReports(Event $e)
+    {
+        $reports = $e['reports'];
+
+        /** @var Uri $uri */
+        $uri = $this->grav['uri'];
+
+        $data = [
+            'views' => $this->grav['views']->getAll(20, 'desc'),
+            'base_url' => $baseUrlRelative = $uri->rootUrl(false),
+        ];
+
+        $reports['Grav Views'] = $this->grav['twig']->processTemplate('reports/views-report.html.twig', $data);
+
+        $this->grav['assets']->addCss('plugins://views/css/admin.css');
+    }
+
+    /**
+     * Add current directory to twig lookup paths.
+     */
+    public function onTwigTemplatePaths()
+    {
+        $this->grav['twig']->twig_paths[] = __DIR__ . '/templates';
     }
 
 
@@ -78,6 +120,13 @@ class ViewsPlugin extends Plugin
         $this->grav['twig']->twig()->addFunction(
             new \Twig_SimpleFunction('track_views', [$this, 'trackViewsFunc'])
         );
+    }
+
+    public function onPageInitialized(Event $event)
+    {
+        $page = $event['page'];
+
+        $this->grav['views']->track($page->route());
     }
 
     /**
