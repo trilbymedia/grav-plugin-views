@@ -1,5 +1,5 @@
 # v1.0.1
-## 12/dd/2018
+## 12/09/2018
 
 1. [](#new)
     * Added a new `type` column to support multiple view types concurrently
