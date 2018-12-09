@@ -1,3 +1,10 @@
+# v1.0.1
+## 12/09/2018
+
+1. [](#new)
+    * Added a new `type` column to support multiple view types concurrently
+    * Updated README.md
+
 # v1.0.0
 ## 12/08/2018
 
