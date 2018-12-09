@@ -1,7 +1,7 @@
 name: Views
-version: 0.1.0
+version: 1.0.0
 description: Simple View tracking and reporting
-icon: plug
+icon: eye
 author:
   name: Trilby Media
   email: hello@trilby.media
@@ -13,7 +13,7 @@ docs: https://github.com/trilbymedia/grav-plugin-views/blob/develop/README.md
 license: MIT
 
 dependencies:
-- { name: database, version: '>=0.1.0' }
+- { name: database, version: '>=1.0.0' }
 
 form:
   validation: strict

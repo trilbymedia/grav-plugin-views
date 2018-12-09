@@ -1,4 +1,4 @@
-# v0.1.1
+# v1.0.0
 ##  mm/dd/2018
 
 1. [](#new)
@@ -6,6 +6,7 @@
     * Allow `{{ track_views(object) }}` format if object can be casted to string containing a key
     * Make `{{ track_views(object) }}` HTML safe, allowing it to be used without `|raw` filter
     * Use new `user-data://` stream
+    * Added support for `autotrack` to track any page based on `onPageInitialized()` event
 
 # v0.1.0
 ##  11/01/2018
