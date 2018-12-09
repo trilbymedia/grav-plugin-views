@@ -37,15 +37,21 @@ class SetCommand extends ConsoleCommand
             ->addArgument(
                 'slug',
                 InputArgument::REQUIRED,
-                'The page slug'
+                'The page slug or unique ID'
             )
             ->addArgument(
                 'count',
                 InputArgument::REQUIRED,
-                'The page views count'
+                'The views count'
             )
-            ->setDescription('Set the views count for a page')
-            ->setHelp('The <info>set</info> command allow to manually set a page views count')
+            ->addArgument(
+                'type',
+                InputArgument::OPTIONAL,
+                'The view type',
+                'pages'
+
+            )
+            ->setHelp('Set the views count for a anything, although it tracks page views by default')
         ;
     }
 
@@ -64,13 +70,14 @@ class SetCommand extends ConsoleCommand
 
         $slug = $this->input->getArgument('slug');
         $count = $this->input->getArgument('count');
+        $type = $this->input->getArgument('type');
 
         $views = $grav['views'];
 
-        $views->set($slug, $count);
+        $views->set($slug, $type, $count);
 
         $io->title('Set Page View Count');
-        $io->text('<green>'. $slug . '</green> page view updated to <cyan>' . $count . '</cyan>');
+        $io->text('<green>'. $slug . '</green> ' . $type . ' view updated to <cyan>' . $count . '</cyan>');
         $io->newLine();
     }
 }

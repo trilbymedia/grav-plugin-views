@@ -39,25 +39,32 @@ class LsCommand extends ConsoleCommand
             ->addArgument(
                 'slug',
                 InputArgument::OPTIONAL,
-                'The page slug',
+                'The page slug or unique ID',
                 ''
+            )
+            ->addOption(
+                'type',
+                't',
+                InputOption::VALUE_OPTIONAL,
+                'Limit the type of views',
+                null
             )
             ->addOption(
                 'limit',
                 'l',
                 InputOption::VALUE_OPTIONAL,
-                'Limit the list of page views',
+                'Limit the list of views',
                 10
             )
             ->addOption(
                 'sort',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                'Sort the list of page views (desc / asc)',
+                'Sort the list of views (desc / asc)',
                 'desc'
             )
-            ->setDescription('List the page views count')
-            ->setHelp('The <info>list</info> command displays the page views count')
+            ->setDescription('List the views count')
+            ->setHelp('The <info>list</info> command displays the views count')
         ;
     }
 
@@ -77,20 +84,21 @@ class LsCommand extends ConsoleCommand
         $slug = $this->input->getArgument('slug');
         $limit = $this->input->getOption('limit');
         $sort = $this->input->getOption('sort');
+        $type = $this->input->getOption('type');
 
         $views = $grav['views'];
 
         $table = new Table($this->output);
         $table->setStyle('box');
-        $table->setHeaders(['Slug', 'Views Count']);
+        $table->setHeaders(['Slug', 'Type', 'Views Count']);
         $rows = [];
 
         if ($slug) {
-            $rows[] = [$slug, $views->get($slug)];
+            $rows[] = [$slug, $type, $views->get($slug, $type)];
         } else {
-            $total = $views->getAll($limit, $sort);
+            $total = $views->getAll($type, $limit, $sort);
             foreach ($total as $view) {
-                $rows[] = [$view['id'], $view['count']];
+                $rows[] = [$view['id'], $view['type'], $view['count']];
             }
         }
 

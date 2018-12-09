@@ -97,7 +97,7 @@ class ViewsPlugin extends Plugin
         $uri = $this->grav['uri'];
 
         $data = [
-            'views' => $this->grav['views']->getAll(20, 'desc'),
+            'views' => $this->grav['views']->getAll(null, 20, 'desc'),
             'base_url' => $baseUrlRelative = $uri->rootUrl(false),
         ];
 
@@ -126,13 +126,13 @@ class ViewsPlugin extends Plugin
     {
         $page = $event['page'];
 
-        $this->grav['views']->track($page->route());
+        $this->grav['views']->track($page->route(), 'pages');
     }
 
     /**
      * @param mixed|null $id
      */
-    public function trackViewsFunc($id = null)
+    public function trackViewsFunc($id = null, $type = 'pages')
     {
         if (null === $id) {
             return;
@@ -141,6 +141,6 @@ class ViewsPlugin extends Plugin
         // Convert objects to string
         $id = (string)$id;
 
-        $this->grav['views']->track($id);
+        $this->grav['views']->track($id, $type);
     }
 }

@@ -44,27 +44,49 @@ The configuration options are as follows:
 
 The default behavior is for the **view** plugin to track all page requests and keep a running total of how many times the pages have been hit.  You can change this behavior by first _disabling_ the `autotrack:` configuration option, then using the Twig function to track a page hit, or if you want to track via another plugin, you can use a simple PHP command.
 
-### Manual Twig Tracking
+> In Views `1.0.1` we re-worked the database structure to allow multiple view types. If you installed and tested version `1.0.0`, please delete your `user/data/views/views.db` so it can be regenerated
 
-To track via Twig, you can use the default `track_views(id)` twig function, but an `id` is required.  For example, to track the current page from a twig template:
+### Twig Tracking
+
+To track via Twig, you can use the default `track_views(id)` twig function, an `id` is required, and a `type` is optional because it defaults to `pages`.  For example, to track the current page from a twig template:
 
 ```twig
 {% do track_views(page.route) %}
 ```
 
-### Manual PHP Tracking
+or specify a custom type
 
-To track via PHP, you can use the default `views` object with a required `id` attribute.  For example, to track the current page from a PHP file:
+```twig
+{% do track_views(page.route, 'widgets') %}
+```
+
+### PHP Tracking
+
+To track via PHP, you can use the default `views` object with a required `id` attribute. A `type` is optional because it defaults to `pages`.  For example, to track the current page from a PHP file:
 
 ```php
 Grav::instance()['views']->track($page->route());
+```
+
+or
+
+```php
+Grav::instance()['views']->track($page->route(), 'widgets');
+```
+
+## Viewing
+
+Via the administrator plugin, you can view the current counts of the top 20 views by Visiting the **Reports** tab in the **Tools** section.  There will be an entry called `Grav Views`.  Alternatively you can query via the CLI or accessing the `Views` object directly and iterating over the values:
+
+```php
+Grav::instance()['views']->getAll(null, 20, 'desc')
 ```
 
 ## CLI Commands
 
 There are currently two built in commands:
 
-`ls` will list all the views currently tracked.
+#### List (ls) Command
 
 ```bash
 bin/plugin views ls
@@ -82,7 +104,33 @@ This will return the information for a specific `slug`
 bin/plugin views ls --limit 10 --sort asc
 ```
 
+This will return the information for a specific `type`
+
+```bash
+bin/plugin views ls --type widgets --limit 10 --sort asc
+```
+
 the `limit`, will limit the amount of rows returned, and the `sort` will can be either `asc` or `desc`
+
+#### Set Command
+
+The set command allows you to set a specific value for an entry:
+
+```bash
+bin/plugin views set /bar 17
+```
+
+Will set the number of views with id '/bar' to the value `17` and defaults to type `pages`
+
+or 
+
+```bash
+bin/plugin views set /bar 17 foos
+```
+
+Will set the number of views with id '/bar' to the value `17` and defaults to type `foos`
+
+
 
 
 
