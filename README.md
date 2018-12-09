@@ -60,5 +60,31 @@ To track via PHP, you can use the default `views` object with a required `id` at
 Grav::instance()['views']->track($page->route());
 ```
 
+## CLI Commands
+
+There are currently two built in commands:
+
+`ls` will list all the views currently tracked.
+
+```bash
+bin/plugin views ls
+```
+
+There are some optional parameters: 
+
+```bash
+bin/plugin views ls '/typography'
+```
+
+This will return the information for a specific `slug`
+
+```bash
+bin/plugin views ls --limit 10 --sort asc
+```
+
+the `limit`, will limit the amount of rows returned, and the `sort` will can be either `asc` or `desc`
+
+
+
 
 
