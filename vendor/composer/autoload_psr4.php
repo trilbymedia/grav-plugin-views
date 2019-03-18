@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Grav\\Plugin\\Views\\' => array($baseDir . '/classes'),
+    'Grav\\Plugin\\Console\\' => array($baseDir . '/cli'),
 );

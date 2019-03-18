@@ -7,13 +7,13 @@ author:
   email: hello@trilby.media
 homepage: https://github.com/trilbymedia/grav-plugin-views
 demo: http://demo.yoursite.com
-keywords: grav, plugin, etc
+keywords: grav, plugin, views
 bugs: https://github.com/trilbymedia/grav-plugin-views/issues
 docs: https://github.com/trilbymedia/grav-plugin-views/blob/develop/README.md
 license: MIT
 
 dependencies:
-  - { name: grav, version: '>=1.6.0-beta.6' }
+  - { name: grav, version: '>=1.6.0-rc.1' }
   - { name: database, version: '>=1.0.0' }
 
 form:

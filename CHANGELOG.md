@@ -1,3 +1,10 @@
+# v1.0.2
+## dd/mm/2019
+
+1. [](#new)
+    * Code cleanup
+    * Pass `phpstan` tests
+
 # v1.0.1
 ## 12/09/2018
 
