@@ -158,6 +158,19 @@ class Views
         return $statement->fetchAll();
     }
 
+    public function select($query = null, $multi = false)
+    {
+        if (null === $query) {
+            return false;
+        }
+
+        $query = 'SELECT ' . $query;
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+
+        return $multi ? $statement->fetchAll() : $statement->fetch();
+    }
+
     public function createTables()
     {
         $commands = [

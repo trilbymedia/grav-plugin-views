@@ -4,6 +4,9 @@
 1. [](#new)
     * Code cleanup
     * Pass `phpstan` tests
+    * Added `select` method that allows to perform custom SELECT queries
+1. [](#bugfix)
+    * Fixed default `limit` for `getAll` from `0` to `-1` in order to actually return all items
 
 # v1.0.1
 ## 12/09/2018
