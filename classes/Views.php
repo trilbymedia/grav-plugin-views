@@ -132,7 +132,7 @@ class Views
         return $results['count'] ?? 0;
     }
 
-    public function getAll($type = null, $limit = 0, $order = 'ASC')
+    public function getAll($type = null, $limit = -1, $order = 'ASC')
     {
         $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
         $offset = 0;
