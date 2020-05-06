@@ -115,8 +115,6 @@ class ViewsPlugin extends Plugin
         ];
 
         $reports['Grav Views'] = $this->grav['twig']->processTemplate('reports/views-report.html.twig', $data);
-
-        $this->grav['assets']->addCss('plugins://views/css/admin.css');
     }
 
     /**

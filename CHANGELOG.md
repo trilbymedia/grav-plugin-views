@@ -4,7 +4,8 @@
 1. [](#new)
     * Code cleanup
     * Pass `phpstan` tests
-    * Added `select` method that allows to perform custom SELECT queries
+    * Added `select` method that allows you to perform custom SELECT queries
+    * Remove `admin.css` as it's no longer needed
 1. [](#bugfix)
     * Fixed default `limit` for `getAll` from `0` to `-1` in order to actually return all items
 
