@@ -8,6 +8,7 @@
     * Remove `admin.css` as it's no longer needed
 1. [](#bugfix)
     * Fixed default `limit` for `getAll` from `0` to `-1` in order to actually return all items
+    * Fix CLI commands to use new format
 
 # v1.0.1
 ## 12/09/2018

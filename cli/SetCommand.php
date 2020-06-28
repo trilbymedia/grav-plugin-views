@@ -67,7 +67,7 @@ class SetCommand extends ConsoleCommand
         $io = new SymfonyStyle($this->input, $this->output);
 
         // Initialize Plugins
-        $grav->fireEvent('onPluginsInitialized');
+        $this->initializePlugins();
 
         $slug = $this->input->getArgument('slug');
         $count = $this->input->getArgument('count');
