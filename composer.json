@@ -1,8 +1,30 @@
 {
+  "name": "getgrav/grav-plugin-views",
+  "type": "grav-plugin",
+  "description": "Simple views count tracking plugin for Grav CMS",
+  "keywords": ["grav", "plugin", "views"],
+  "homepage": "https://github.com/trilbymedia/grav-plugin-views",
+  "license": "MIT",
+  "authors": [
+      {
+          "name": "Trilby Media",
+          "email": "hello@trilby.media",
+          "homepage": "https://trilby.media/",
+          "role": "Developer"
+      }
+  ],
+  "support": {
+      "issues": "https://github.com/trilbymedia/grav-plugin-views/issues",
+      "irc": "https://chat.getgrav.org",
+      "forum": "https://getgrav.org/forum",
+      "docs": "https://github.com/trilbymedia/grav-plugin-views/blob/master/README.md"
+  },
   "autoload": {
     "psr-4": {
-      "Grav\\Plugin\\Views\\": "classes/"
-    }
+      "Grav\\Plugin\\Views\\": "classes/",
+      "Grav\\Plugin\\Console\\": "cli/"
+    },
+    "classmap":  ["views.php"]
   },
   "require": {
     "php": ">=7.1.3",

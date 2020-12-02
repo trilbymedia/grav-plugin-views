@@ -1,8 +1,18 @@
 <?php
+
+/**
+ * @package    Grav\Plugin\Views
+ *
+ * @copyright  Copyright (C) 2014 - 2019 Trilby Media, LLC. All rights reserved.
+ * @license    MIT License; see LICENSE file for details.
+ */
+
 namespace Grav\Plugin;
 
 use Composer\Autoload\ClassLoader;
+use Grav\Common\Config\Config;
 use Grav\Common\Plugin;
+use Grav\Common\Uri;
 use Grav\Plugin\Views\Views;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -53,7 +63,10 @@ class ViewsPlugin extends Plugin
     public function register()
     {
         $this->grav['views'] = function ($c) {
-            return new Views($c['config']->get('plugins.views'));
+            /** @var Config $config */
+            $config = $c['config'];
+
+            return new Views($config->get('plugins.views'));
         };
     }
 
@@ -102,8 +115,6 @@ class ViewsPlugin extends Plugin
         ];
 
         $reports['Grav Views'] = $this->grav['twig']->processTemplate('reports/views-report.html.twig', $data);
-
-        $this->grav['assets']->addCss('plugins://views/css/admin.css');
     }
 
     /**

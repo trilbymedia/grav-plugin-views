@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @package    Grav\Plugin\Views
+ *
+ * @copyright  Copyright (C) 2014 - 2019 Trilby Media, LLC. All rights reserved.
+ * @license    MIT License; see LICENSE file for details.
+ */
+
 namespace Grav\Plugin\Views;
 
 use Grav\Common\Filesystem\Folder;
@@ -108,12 +116,12 @@ class Views
     {
         $query = "SELECT count FROM {$this->table_total_views} WHERE id = :id";
 
-        if (!is_null($type)) {
+        if (null !== $type) {
             $query .= ' AND type = :type';
         }
 
         $statement = $this->db->prepare($query);
-        if (!is_null($type)) {
+        if (null !== $type) {
             $statement->bindValue(':type', $type, PDO::PARAM_STR);
         }
         $statement->bindValue(':id', $id, PDO::PARAM_STR);
@@ -124,15 +132,15 @@ class Views
         return $results['count'] ?? 0;
     }
 
-    public function getAll($type = null, $limit = 0, $order = 'ASC')
+    public function getAll($type = null, $limit = -1, $order = 'ASC')
     {
         $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
         $offset = 0;
 
         $query = "SELECT id, count, type FROM {$this->table_total_views} ";
 
-        if (!is_null($type)) {
-            $query .= "WHERE type = :type ";
+        if (null !== $type) {
+            $query .= 'WHERE type = :type ';
         }
 
         $query .= "ORDER BY count {$order}, type LIMIT :limit OFFSET :offset";
@@ -140,7 +148,7 @@ class Views
 
         $statement = $this->db->prepare($query);
 
-        if (!is_null($type)) {
+        if (null !== $type) {
             $statement->bindValue(':type', $type, PDO::PARAM_STR);
         }
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -148,6 +156,19 @@ class Views
         $statement->execute();
 
         return $statement->fetchAll();
+    }
+
+    public function select($query = null, $multi = false)
+    {
+        if (null === $query) {
+            return false;
+        }
+
+        $query = 'SELECT ' . $query;
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+
+        return $multi ? $statement->fetchAll() : $statement->fetch();
     }
 
     public function createTables()
@@ -167,7 +188,9 @@ class Views
         static $bool;
 
         if ($bool === null) {
-            $bool = version_compare($this->db->query('SELECT sqlite_version()')->fetch()[0], '3.24', '>=');
+            $query = $this->db->query('SELECT sqlite_version()');
+            $version = $query ? $query->fetch()[0] ?? 0 : 0;
+            $bool = version_compare($version, '3.24', '>=');
         }
 
         return $bool;

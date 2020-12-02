@@ -1,5 +1,7 @@
 # Views Plugin
 
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+
 The **Views** Plugin is for [Grav CMS](http://github.com/getgrav/grav) version 1.6+. This is a simple views count tracking plugin.  You can use it several ways, but by default it will automatically track all site page requests and use the **page route** as the identifying key.  There is no limiting, tracking, or refresh detection, it simply tracks the number of times a page has been loaded.
 
 ## Installation

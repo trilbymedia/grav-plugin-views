@@ -10,6 +10,7 @@ class ComposerStaticInitf7887527659a2ee20565693aa7585160
         'G' => 
         array (
             'Grav\\Plugin\\Views\\' => 18,
+            'Grav\\Plugin\\Console\\' => 20,
         ),
     );
 
@@ -18,6 +19,14 @@ class ComposerStaticInitf7887527659a2ee20565693aa7585160
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
+        'Grav\\Plugin\\Console\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/cli',
+        ),
+    );
+
+    public static $classMap = array (
+        'Grav\\Plugin\\ViewsPlugin' => __DIR__ . '/../..' . '/views.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -25,6 +34,7 @@ class ComposerStaticInitf7887527659a2ee20565693aa7585160
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitf7887527659a2ee20565693aa7585160::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitf7887527659a2ee20565693aa7585160::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitf7887527659a2ee20565693aa7585160::$classMap;
 
         }, null, ClassLoader::class);
     }

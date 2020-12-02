@@ -1,15 +1,16 @@
 <?php
+
 /**
  * @package    Grav\Plugin\Views
  *
- * @copyright  Copyright (C) 2014 - 2017 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (C) 2014 - 2019 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
+
 namespace Grav\Plugin\Console;
 
 use Grav\Console\ConsoleCommand;
 use Grav\Common\Grav;
-use Grav\Plugin\Database\Database;
 use Grav\Plugin\Views\Views;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -66,7 +67,7 @@ class SetCommand extends ConsoleCommand
         $io = new SymfonyStyle($this->input, $this->output);
 
         // Initialize Plugins
-        $grav->fireEvent('onPluginsInitialized');
+        $this->initializePlugins();
 
         $slug = $this->input->getArgument('slug');
         $count = $this->input->getArgument('count');
