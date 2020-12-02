@@ -1,7 +1,8 @@
-# v1.0.2
-## dd/mm/2019
+# v1.1.0
+## 12/02/2020
 
 1. [](#new)
+    * Require Grav 1.7
     * Code cleanup
     * Pass `phpstan` tests
     * Added `select` method that allows you to perform custom SELECT queries

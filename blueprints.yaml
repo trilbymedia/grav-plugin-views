@@ -1,5 +1,7 @@
 name: Views
-version: 1.0.1
+type: plugin
+slug: views
+version: 1.1.0
 description: Simple View tracking and reporting
 icon: eye
 author:
