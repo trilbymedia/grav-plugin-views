@@ -15,6 +15,7 @@ use Grav\Common\Plugin;
 use Grav\Common\Uri;
 use Grav\Plugin\Views\Views;
 use RocketTheme\Toolbox\Event\Event;
+use Twig\TwigFunction;
 
 /**
  * Class ViewsPlugin
@@ -129,7 +130,7 @@ class ViewsPlugin extends Plugin
     public function onTwigInitialized()
     {
         $this->grav['twig']->twig()->addFunction(
-            new \Twig_SimpleFunction('track_views', [$this, 'trackViewsFunc'], ['is_safe' => ['html']])
+            new TwigFunction('track_views', [$this, 'trackViewsFunc'], ['is_safe' => ['html']])
         );
     }
 
