@@ -76,6 +76,21 @@ class ViewsPlugin extends Plugin
      */
     public function onPluginsInitialized()
     {
+        $events = [];
+        if ($this->grav['config']->get('plugins.views.admin2.reports', true)) {
+            $events['onApiGenerateReports'] = [
+                ['onApiGenerateReports', 10]
+            ];
+        }
+        if ($this->grav['config']->get('plugins.views.admin2.dashboard', true)) {
+            $events['onApiDashboardWidgets'] = [
+                ['onApiDashboardWidgets', 10]
+            ];
+        }
+        if ($events) {
+            $this->enable($events);
+        }
+
         if ($this->isAdmin()) {
             $this->enable([
                 'onAdminGenerateReports' => [
@@ -118,6 +133,43 @@ class ViewsPlugin extends Plugin
         $reports['Grav Views'] = $this->grav['twig']->processTemplate('reports/views-report.html.twig', $data);
     }
 
+    public function onApiGenerateReports(Event $e)
+    {
+        $items = $this->grav['views']->getAll(null, 20, 'desc');
+        $total = 0;
+        foreach ($items as $item) {
+            $total += (int) ($item['count'] ?? 0);
+        }
+
+        $reports = $e['reports'];
+        $reports[] = [
+            'id' => 'views',
+            'title' => 'Grav Views',
+            'provider' => 'views',
+            'component' => 'views-report',
+            'status' => 'success',
+            'message' => $items ? $total . ' tracked views across top pages.' : 'No views tracked yet.',
+            'items' => $items,
+        ];
+        $e['reports'] = $reports;
+    }
+
+    public function onApiDashboardWidgets(Event $e)
+    {
+        $widgets = $e['widgets'];
+        $widgets[] = [
+            'id' => 'views.top-pages',
+            'label' => 'Grav Views',
+            'icon' => 'Eye',
+            'sizes' => ['sm', 'md'],
+            'defaultSize' => 'sm',
+            'authorize' => 'api.reports.read',
+            'priority' => 55,
+            'scriptUrl' => '/gpm/plugins/views/widget-script',
+        ];
+        $e['widgets'] = $widgets;
+    }
+
     /**
      * Add current directory to twig lookup paths.
      */
@@ -136,6 +188,16 @@ class ViewsPlugin extends Plugin
 
     public function onPageInitialized(Event $event)
     {
+        if ($this->grav['config']->get('plugins.views.tracking.humans_only', false)) {
+            $browser = $this->grav['browser'] ?? null;
+            if ($browser && method_exists($browser, 'isHuman') && !$browser->isHuman()) {
+                return;
+            }
+            if ($browser && method_exists($browser, 'isTrackable') && !$browser->isTrackable()) {
+                return;
+            }
+        }
+
         $page = $event['page'];
 
         $this->grav['views']->track($page->route(), 'pages');
