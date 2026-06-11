@@ -46,3 +46,60 @@ form:
         0: PLUGIN_ADMIN.DISABLED
       validate:
         type: bool
+
+    database:
+      type: section
+      title: Database Connection
+      underline: true
+      fields:
+        database.driver:
+          type: text
+          label: Database Driver
+          help: Leave blank to use the default SQLite database file. Set to a Database plugin driver such as pgsql to use a named connection.
+        database.connection:
+          type: text
+          label: Named Connection
+          help: Leave blank to use the default SQLite database file. Set to a Database plugin connection name when a driver is configured.
+
+    admin2:
+      type: section
+      title: Admin2
+      underline: true
+      fields:
+        admin2.reports:
+          type: toggle
+          label: Admin2 Reports
+          highlight: 1
+          default: 1
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+        admin2.dashboard:
+          type: toggle
+          label: Admin2 Dashboard Widget
+          highlight: 1
+          default: 1
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+
+    tracking:
+      type: section
+      title: Tracking
+      underline: true
+      fields:
+        tracking.humans_only:
+          type: toggle
+          label: Track Humans Only
+          help: Skip automatic tracking when Grav's browser detector identifies a bot or non-trackable request.
+          highlight: 0
+          default: 0
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool

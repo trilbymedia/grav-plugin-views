@@ -8,7 +8,7 @@ The **Views** Plugin is for [Grav CMS](http://github.com/getgrav/grav) version 1
 
 Installing the Views plugin can be done in one of two ways. The GPM (Grav Package Manager) installation method enables you to quickly and easily install the plugin with a simple terminal command, while the manual method enables you to do so via a zip file.
 
-It has a requirement of the Grav **Database** plugin as it stores the views in a simple, file-based sqlite database file.  This will automatically be installed if you use GPM.
+It has a requirement of the Grav **Database** plugin. By default it stores views in a simple, file-based sqlite database file. This will automatically be installed if you use GPM.
 
 ### GPM Installation (Preferred)
 
@@ -20,9 +20,9 @@ The simplest way to install this plugin is via the [Grav Package Manager (GPM)](
 
 Other than standard Grav requirements, this plugin requires the **Database** plugin, which in turn has some system requirements:
 
-* **SQLite3** Database
 * **PHP pdo** Extension
-* **PHP pdo_sqlite** Driver
+* **PHP pdo_sqlite** Driver for the default SQLite database
+* The matching PDO driver for any configured Database plugin connection, for example **pdo_pgsql** for PostgreSQL
 
 | PHP by default comes with **PDO** and the vast majority of linux-based systems already come with SQLite.  
 
@@ -34,13 +34,34 @@ Here is the default configuration and an explanation of available options:
 
 ```yaml
 enabled: true
-autotrack: true    
+autotrack: true
+database:
+  driver: ''
+  connection: ''
+admin2:
+  reports: true
+  dashboard: true
+tracking:
+  humans_only: false
 ```
 
 The configuration options are as follows:
 
 * `enabled` - enable or disable the plugin instantly
 * `autotrack` - by default, views will track all pages using the `onPageInitialized` event, disable this to track manually
+* `database.driver` - leave blank to use the default SQLite database, or set to a Database plugin driver such as `pgsql`
+* `database.connection` - leave blank to use the default SQLite database, or set to a Database plugin named connection
+* `admin2.reports` - add the Grav Views report to Admin2 reports
+* `admin2.dashboard` - add a Grav Views top pages widget to the Admin2 dashboard
+* `tracking.humans_only` - when enabled, automatic tracking skips requests Grav identifies as bots or non-trackable browsers
+
+For PostgreSQL, configure a named connection in the Database plugin and point Views at that connection:
+
+```yaml
+database:
+  driver: pgsql
+  connection: page_views
+```
 
 ## Usage
 
@@ -78,7 +99,7 @@ Grav::instance()['views']->track($page->route(), 'widgets');
 
 ## Viewing
 
-Via the administrator plugin, you can view the current counts of the top 20 views by Visiting the **Reports** tab in the **Tools** section.  There will be an entry called `Grav Views`.  Alternatively you can query via the CLI or accessing the `Views` object directly and iterating over the values:
+Via the administrator plugin, you can view the current counts of the top 20 views by Visiting the **Reports** tab in the **Tools** section. There will be an entry called `Grav Views`. Grav 2 Admin2 also shows `Grav Views` in reports and can add a top pages widget to the dashboard. Alternatively you can query via the CLI or accessing the `Views` object directly and iterating over the values:
 
 ```php
 Grav::instance()['views']->getAll(null, 20, 'desc')
@@ -131,7 +152,6 @@ bin/plugin views set /bar 17 foos
 ```
 
 Will set the number of views with id '/bar' to the value `17` and defaults to type `foos`
-
 
 
 
