@@ -7,6 +7,7 @@
     * Added `tracking.humans_only` option to skip automatic tracking of bots / non-trackable requests
 2. [](#improved)
     * Made tracking and listing queries portable across SQLite and PostgreSQL (upsert parameter binding, no negative `LIMIT`)
+    * The Admin2 dashboard widget now reads from a dedicated lightweight `/views/top-pages` API endpoint instead of the heavyweight `/reports` endpoint, which ran a full-site XSS scan on every dashboard load
 
 # v1.2.0
 ## 05/01/2026

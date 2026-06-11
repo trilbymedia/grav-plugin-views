@@ -26,7 +26,7 @@ class ViewsWidgetElement extends HTMLElement {
       const serverUrl = window.__GRAV_API_SERVER_URL || '';
       const prefix = window.__GRAV_API_PREFIX || '/api/v1';
       const token = window.__GRAV_API_TOKEN || '';
-      const response = await fetch(`${serverUrl}${prefix}/reports`, {
+      const response = await fetch(`${serverUrl}${prefix}/views/top-pages?limit=6`, {
         headers: token ? { 'X-API-Token': token } : {},
       });
 
@@ -35,9 +35,8 @@ class ViewsWidgetElement extends HTMLElement {
       }
 
       const payload = await response.json();
-      const reports = Array.isArray(payload.data) ? payload.data : [];
-      const report = reports.find((item) => item.id === 'views');
-      this.items = Array.isArray(report?.items) ? report.items.slice(0, 6) : [];
+      const items = Array.isArray(payload?.data?.items) ? payload.data.items : [];
+      this.items = items.slice(0, 6);
     } catch (error) {
       this.error = error instanceof Error ? error.message : 'Unable to load views.';
     } finally {

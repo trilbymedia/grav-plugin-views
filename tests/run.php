@@ -252,6 +252,17 @@ namespace {
         }
     }
 
+    final class FakeRouteCollector
+    {
+        public $routes = [];
+
+        public function get($route, $handler)
+        {
+            $this->routes[] = ['GET', $route, $handler];
+            return $this;
+        }
+    }
+
     function assertSameValue($expected, $actual, $message)
     {
         if ($expected !== $actual) {
@@ -390,6 +401,26 @@ namespace {
         assertTrueValue(strpos(file_get_contents($widget), 'window.__GRAV_WIDGET_TAG') !== false, 'Widget component should use the Admin2 widget tag bridge.');
     }
 
+    function testDashboardWidgetEndpointIsRegistered()
+    {
+        assertTrueValue(method_exists(ViewsPlugin::class, 'onApiRegisterRoutes'), 'Views should register an API route for the dashboard widget.');
+
+        $plugin = new ViewsPlugin();
+        $collector = new FakeRouteCollector();
+        $plugin->onApiRegisterRoutes(new Event(['routes' => $collector]));
+
+        assertSameValue('/views/top-pages', $collector->routes[0][1] ?? null, 'Views should expose a lightweight top-pages route.');
+        assertSameValue('topPages', $collector->routes[0][2][1] ?? null, 'Top-pages route should map to the controller action.');
+    }
+
+    function testWidgetUsesLightweightEndpointNotReports()
+    {
+        $widget = file_get_contents(__DIR__ . '/../admin-next/widgets/views.js');
+
+        assertTrueValue(strpos($widget, '/views/top-pages') !== false, 'Widget should fetch the lightweight top-pages endpoint.');
+        assertTrueValue(strpos($widget, '/reports') === false, 'Widget should not hit the heavyweight /reports endpoint.');
+    }
+
     $tests = [
         'testLegacySqliteConnectionRemainsDefault',
         'testNamedDatabaseConnectionCanBeUsed',
@@ -397,6 +428,8 @@ namespace {
         'testUnlimitedGetAllOmitsLimitClause',
         'testAdmin2ReportAndWidgetEventsAreRegistered',
         'testAdmin2ComponentFilesExist',
+        'testDashboardWidgetEndpointIsRegistered',
+        'testWidgetUsesLightweightEndpointNotReports',
     ];
 
     foreach ($tests as $test) {

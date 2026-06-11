@@ -13,6 +13,7 @@ use Composer\Autoload\ClassLoader;
 use Grav\Common\Config\Config;
 use Grav\Common\Plugin;
 use Grav\Common\Uri;
+use Grav\Plugin\Views\Api\ViewsReportController;
 use Grav\Plugin\Views\Views;
 use RocketTheme\Toolbox\Event\Event;
 use Twig\TwigFunction;
@@ -44,8 +45,21 @@ class ViewsPlugin extends Plugin
                 ['autoload', 100000],
                 ['register', 1000],
                 ['onPluginsInitialized', 1000]
+            ],
+            'onApiRegisterRoutes' => [
+                ['onApiRegisterRoutes', 0]
             ]
         ];
+    }
+
+    /**
+     * [onApiRegisterRoutes] Register the lightweight endpoint that backs the
+     * Admin2 dashboard widget, so it doesn't have to hit the heavyweight
+     * /reports endpoint. Only fires when the API plugin is present.
+     */
+    public function onApiRegisterRoutes(Event $event)
+    {
+        $event['routes']->get('/views/top-pages', [ViewsReportController::class, 'topPages']);
     }
 
     /**
