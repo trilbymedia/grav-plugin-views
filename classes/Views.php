@@ -23,25 +23,37 @@ class Views
     protected $path = 'user-data://views';
     protected $db_name = 'views.db';
     protected $table_total_views = 'total_views';
+    protected $supports_on_conflict;
 
     public function __construct($config)
     {
         $this->config = new Config($config);
+        $this->db = $this->connectDatabase();
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        if (!$this->db->tableExists($this->table_total_views)) {
+            $this->createTables();
+        }
+    }
+
+    protected function connectDatabase()
+    {
+        $driver = trim((string) $this->config->get('database.driver', ''));
+        $connection = trim((string) $this->config->get('database.connection', ''));
+
+        if ($driver !== '' && $connection !== '') {
+            return Grav::instance()['database']->{$driver}($connection);
+        }
+
         $db_path = Grav::instance()['locator']->findResource($this->path, true, true);
 
-        // Create dir if it doesn't exist
         if (!file_exists($db_path)) {
             Folder::create($db_path);
         }
 
         $connect_string = 'sqlite:' . $db_path . '/' . $this->db_name;
 
-        $this->db = Grav::instance()['database']->connect($connect_string);
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        if (!$this->db->tableExists($this->table_total_views)) {
-            $this->createTables();
-        }
+        return Grav::instance()['database']->connect($connect_string);
     }
 
     public function track($id, $type = 'pages', $amount = 1)
@@ -69,12 +81,14 @@ class Views
             return;
         }
 
-        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = count + :amount";
+        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = count + :update_amount, type = :update_type";
 
         $statement = $this->db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_STR);
         $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
+        $statement->bindValue(':update_amount', $amount, PDO::PARAM_INT);
         $statement->bindValue(':type', $type, PDO::PARAM_STR);
+        $statement->bindValue(':update_type', $type, PDO::PARAM_STR);
         $statement->execute();
     }
 
@@ -103,12 +117,14 @@ class Views
             return;
         }
 
-        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = :amount";
+        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = :update_amount, type = :update_type";
 
         $statement = $this->db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_STR);
         $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
+        $statement->bindValue(':update_amount', $amount, PDO::PARAM_INT);
         $statement->bindValue(':type', $type, PDO::PARAM_STR);
+        $statement->bindValue(':update_type', $type, PDO::PARAM_STR);
         $statement->execute();
     }
 
@@ -143,16 +159,21 @@ class Views
             $query .= 'WHERE type = :type ';
         }
 
-        $query .= "ORDER BY count {$order}, type LIMIT :limit OFFSET :offset";
+        $query .= "ORDER BY count {$order}, type";
 
+        if ($limit >= 0) {
+            $query .= " LIMIT :limit OFFSET :offset";
+        }
 
         $statement = $this->db->prepare($query);
 
         if (null !== $type) {
             $statement->bindValue(':type', $type, PDO::PARAM_STR);
         }
-        $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+        if ($limit >= 0) {
+            $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+        }
         $statement->execute();
 
         return $statement->fetchAll();
@@ -185,14 +206,21 @@ class Views
 
     protected function supportOnConflict()
     {
-        static $bool;
-
-        if ($bool === null) {
+        if ($this->supports_on_conflict === null) {
+            $driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if ($driver === 'pgsql') {
+                $this->supports_on_conflict = true;
+                return true;
+            }
+            if ($driver !== 'sqlite') {
+                $this->supports_on_conflict = false;
+                return false;
+            }
             $query = $this->db->query('SELECT sqlite_version()');
             $version = $query ? $query->fetch()[0] ?? 0 : 0;
-            $bool = version_compare($version, '3.24', '>=');
+            $this->supports_on_conflict = version_compare($version, '3.24', '>=');
         }
 
-        return $bool;
+        return $this->supports_on_conflict;
     }
 }

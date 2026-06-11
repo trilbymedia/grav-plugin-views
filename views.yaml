@@ -1,2 +1,10 @@
 enabled: true
 autotrack: true
+database:
+  driver: ''
+  connection: ''
+admin2:
+  reports: true
+  dashboard: true
+tracking:
+  humans_only: false
