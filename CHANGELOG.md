@@ -1,3 +1,13 @@
+# v1.3.0
+## 06/11/2026
+
+1. [](#new)
+    * Added **Admin2** integration: a `Grav Views` report and an optional top pages dashboard widget via the API plugin events
+    * Added support for **Database plugin named connections** (e.g. PostgreSQL) alongside the default file-based SQLite database
+    * Added `tracking.humans_only` option to skip automatic tracking of bots / non-trackable requests
+2. [](#improved)
+    * Made tracking and listing queries portable across SQLite and PostgreSQL (upsert parameter binding, no negative `LIMIT`)
+
 # v1.2.0
 ## 05/01/2026
 
