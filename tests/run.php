@@ -347,6 +347,23 @@ namespace {
         assertTrueValue(strpos($pdo->prepared[0], 'ON CONFLICT') !== false, 'PostgreSQL tracking should use an upsert query.');
     }
 
+    function testPostgresTrackQualifiesCountInUpsert()
+    {
+        $pdo = new FakePdo('pgsql');
+        $database = new FakeDatabaseService(new FakePdo('sqlite'), $pdo);
+        setGrav($database);
+
+        $views = new Views([
+            'database' => [
+                'driver' => 'pgsql',
+                'connection' => 'page_views',
+            ],
+        ]);
+        $views->track('/journal/example');
+
+        assertTrueValue(strpos($pdo->prepared[0], 'total_views.count + :update_amount') !== false, 'PostgreSQL tracking should qualify the existing count column in upserts.');
+    }
+
     function testUnlimitedGetAllOmitsLimitClause()
     {
         $pdo = new FakePdo('pgsql');
@@ -425,6 +442,7 @@ namespace {
         'testLegacySqliteConnectionRemainsDefault',
         'testNamedDatabaseConnectionCanBeUsed',
         'testPostgresTrackDoesNotRunSqliteVersionProbe',
+        'testPostgresTrackQualifiesCountInUpsert',
         'testUnlimitedGetAllOmitsLimitClause',
         'testAdmin2ReportAndWidgetEventsAreRegistered',
         'testAdmin2ComponentFilesExist',
