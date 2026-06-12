@@ -1,3 +1,9 @@
+# v1.3.1
+## 06/12/2026
+
+1. [](#bugfix)
+    * Fixed PostgreSQL tracking upserts by qualifying the existing `count` column in `ON CONFLICT` updates
+
 # v1.3.0
 ## 06/11/2026
 
