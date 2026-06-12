@@ -81,7 +81,7 @@ class Views
             return;
         }
 
-        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = count + :update_amount, type = :update_type";
+        $query = "INSERT INTO {$this->table_total_views} (id, count, type) VALUES (:id, :amount, :type) ON CONFLICT(id) DO UPDATE SET count = {$this->table_total_views}.count + :update_amount, type = :update_type";
 
         $statement = $this->db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_STR);
