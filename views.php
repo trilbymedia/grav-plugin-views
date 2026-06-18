@@ -213,8 +213,13 @@ class ViewsPlugin extends Plugin
         }
 
         $page = $event['page'];
+        $route = is_object($page) && method_exists($page, 'route') ? (string) $page->route() : '';
 
-        $this->grav['views']->track($page->route(), 'pages');
+        if ($route === '') {
+            return;
+        }
+
+        $this->grav['views']->track($route, 'pages');
     }
 
     /**
