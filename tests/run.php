@@ -252,6 +252,31 @@ namespace {
         }
     }
 
+    final class FakeViewsTracker
+    {
+        public $tracked = [];
+
+        public function track($id, $type = 'pages')
+        {
+            $this->tracked[] = [$id, $type];
+        }
+    }
+
+    final class FakePageRoute
+    {
+        private $route;
+
+        public function __construct($route)
+        {
+            $this->route = $route;
+        }
+
+        public function route()
+        {
+            return $this->route;
+        }
+    }
+
     final class FakeRouteCollector
     {
         public $routes = [];
@@ -438,6 +463,29 @@ namespace {
         assertTrueValue(strpos($widget, '/reports') === false, 'Widget should not hit the heavyweight /reports endpoint.');
     }
 
+    function testAutotrackSkipsPagesWithoutRoutes()
+    {
+        $grav = Grav::instance();
+        $grav->exchangeArray([]);
+        $grav['config'] = new Config([
+            'plugins' => [
+                'views' => [
+                    'tracking' => [
+                        'humans_only' => false,
+                    ],
+                ],
+            ],
+        ]);
+        $grav['views'] = new FakeViewsTracker();
+
+        $plugin = new ViewsPlugin();
+        $plugin->onPageInitialized(new Event(['page' => new FakePageRoute(null)]));
+        $plugin->onPageInitialized(new Event(['page' => new FakePageRoute('')]));
+        $plugin->onPageInitialized(new Event(['page' => new FakePageRoute('/journal/example')]));
+
+        assertSameValue([['/journal/example', 'pages']], $grav['views']->tracked, 'Autotrack should ignore plugin/dummy pages that do not have a real route.');
+    }
+
     $tests = [
         'testLegacySqliteConnectionRemainsDefault',
         'testNamedDatabaseConnectionCanBeUsed',
@@ -448,6 +496,7 @@ namespace {
         'testAdmin2ComponentFilesExist',
         'testDashboardWidgetEndpointIsRegistered',
         'testWidgetUsesLightweightEndpointNotReports',
+        'testAutotrackSkipsPagesWithoutRoutes',
     ];
 
     foreach ($tests as $test) {
