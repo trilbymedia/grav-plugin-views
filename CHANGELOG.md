@@ -1,3 +1,9 @@
+# v1.3.2
+## 06/18/2026
+
+1. [](#bugfix)
+    * Skipped automatic page-view tracking when generated or plugin pages do not expose a real route
+
 # v1.3.1
 ## 06/12/2026
 
