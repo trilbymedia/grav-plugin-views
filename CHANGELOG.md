@@ -1,3 +1,9 @@
+# v1.3.3
+## 06/19/2026
+
+1. [](#bugfix)
+    * Skipped tracking when manual or Twig calls pass an empty view ID
+
 # v1.3.2
 ## 06/18/2026
 

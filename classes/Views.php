@@ -58,6 +58,12 @@ class Views
 
     public function track($id, $type = 'pages', $amount = 1)
     {
+        $id = (string) $id;
+
+        if ($id === '') {
+            return;
+        }
+
         // Support SQLite < 3.24
         if (!$this->supportOnConflict()) {
             $query = "UPDATE {$this->table_total_views} SET count = count + :amount, type = :type WHERE id = :id";
