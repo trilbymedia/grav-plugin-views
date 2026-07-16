@@ -372,6 +372,25 @@ namespace {
         assertTrueValue(strpos($pdo->prepared[0], 'ON CONFLICT') !== false, 'PostgreSQL tracking should use an upsert query.');
     }
 
+    function testTrackSkipsEmptyIds()
+    {
+        $pdo = new FakePdo('pgsql');
+        $database = new FakeDatabaseService(new FakePdo('sqlite'), $pdo);
+        setGrav($database);
+
+        $views = new Views([
+            'database' => [
+                'driver' => 'pgsql',
+                'connection' => 'page_views',
+            ],
+        ]);
+        $views->track(null);
+        $views->track('');
+        $views->track('/journal/example');
+
+        assertSameValue(1, count($pdo->prepared), 'Views should only prepare a tracking query when the id is non-empty.');
+    }
+
     function testPostgresTrackQualifiesCountInUpsert()
     {
         $pdo = new FakePdo('pgsql');
@@ -490,6 +509,7 @@ namespace {
         'testLegacySqliteConnectionRemainsDefault',
         'testNamedDatabaseConnectionCanBeUsed',
         'testPostgresTrackDoesNotRunSqliteVersionProbe',
+        'testTrackSkipsEmptyIds',
         'testPostgresTrackQualifiesCountInUpsert',
         'testUnlimitedGetAllOmitsLimitClause',
         'testAdmin2ReportAndWidgetEventsAreRegistered',
